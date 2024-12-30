@@ -1,8 +1,11 @@
+#TODO:  //LISTO// Usar otro servidor para pasar a produccion en cada micro servicio
+
+
 # Imagen base de Python
 FROM python:3.10-slim-bullseye
 
 # Variables de entorno
-ENV FLASK_ENV=production \
+ENV FLASK_ENV=development \
     PYTHONUNBUFFERED=1 \
     PATH=$PATH:/home/flaskapp/.local/bin
 
@@ -30,5 +33,5 @@ USER flaskapp
 # Exponer el puerto de Flask
 EXPOSE 5000
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT [ "python", "main.py" ]
+# Comando de entrada
+ENTRYPOINT ["python", "main.py"]

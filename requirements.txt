@@ -14,3 +14,6 @@ sqlalchemy-easy-softdelete==0.8.3
 Flask-jwt-extended==4.6.0
 Flask-Caching
 redis
+gunicorn==21.0.0
+psycopg2-binary==2.9.6
+
