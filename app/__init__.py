@@ -1,13 +1,43 @@
 import os
-
 from flask import Flask
 from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
-
 from app.config import cache_config, factory
+import redis
+import logging
 
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+# Instancia global de extensiones
 db = SQLAlchemy()
-cache=Cache()
+cache = Cache()
+
+# Obtener las variables de entorno
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+redis_password = os.getenv('REDIS_PASSWORD', '')
+redis_db = int(os.getenv('REDIS_DB', 0))
+
+# Crear una instancia de Redis
+redis_client = redis.StrictRedis(
+    host=redis_host,
+    port=redis_port,
+    db=redis_db,
+    password=redis_password,
+    decode_responses=True
+)
+
+# Verificar la conexión
+try:
+    redis_client.ping()
+    logger.info("Conexión a Redis exitosa.")
+except redis.ConnectionError as e:
+    logger.error(f"Error al conectar con Redis: {e}")
+
+
 def create_app():
     app = Flask(__name__)
     app_context = os.getenv('FLASK_ENV', 'development')

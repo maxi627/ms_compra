@@ -3,7 +3,7 @@ services:
   ms-compras:
     build:
       context: .
-    image: ms-compras:v1.0
+    image: ms-compras:v1.1
     container_name: compra_service
     environment:
       - FLASK_ENV=development        #cambiar según el entorno a usar (development/production)
