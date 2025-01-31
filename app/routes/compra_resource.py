@@ -13,7 +13,7 @@ response_schema = ResponseSchema()
 def all():
     response_builder = ResponseBuilder()
     try:
-        data = compra_schema.dump(service.get_all(), many=True)
+        data = compra_schema.dump(service.all(), many=True)
         response_builder.add_message("Compras found").add_status_code(200).add_data(data)
         return response_schema.dump(response_builder.build()), 200
     except Exception as e:
@@ -24,7 +24,7 @@ def all():
 def one(id):
     response_builder = ResponseBuilder()
     try:
-        data = service.get_by_id(id)
+        data = service.find(id)
         if data:
             serialized_data = compra_schema.dump(data)
             response_builder.add_message("Compra found").add_status_code(200).add_data(serialized_data)
@@ -37,11 +37,11 @@ def one(id):
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras', methods=['POST'])
-def create():
+def add():
     response_builder = ResponseBuilder()
     try:
         compra = compra_schema.load(request.json)
-        data = compra_schema.dump(service.create(compra))
+        data = compra_schema.dump(service.add(compra))
         response_builder.add_message("Compra created").add_status_code(201).add_data(data)
         return response_schema.dump(response_builder.build()), 201
     except ValidationError as err:
