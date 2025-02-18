@@ -1,5 +1,7 @@
 from flask import Blueprint, request
 from marshmallow import ValidationError
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from app.mapping import CompraSchema, ResponseSchema
 from app.services import CompraService, ResponseBuilder
@@ -9,7 +11,15 @@ service = CompraService()
 compra_schema = CompraSchema()
 response_schema = ResponseSchema()
 
+# Configurar el limitador
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["10 per minute"]  # Límite global para todo el microservicio
+)
+
+# Aplicar limitadores específicos en las rutas
 @compra.route('/compras', methods=['GET'])
+@limiter.limit("5 per minute")  # Límite específico para esta ruta
 def all():
     response_builder = ResponseBuilder()
     try:
@@ -21,6 +31,7 @@ def all():
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['GET'])
+@limiter.limit("5 per minute")  # Límite específico para esta ruta
 def one(id):
     response_builder = ResponseBuilder()
     try:
@@ -37,6 +48,7 @@ def one(id):
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras', methods=['POST'])
+@limiter.limit("5 per minute")  # Límite específico para esta ruta
 def add():
     response_builder = ResponseBuilder()
     try:
@@ -52,6 +64,7 @@ def add():
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['PUT'])
+@limiter.limit("5 per minute")  # Límite específico para esta ruta
 def update(id):
     response_builder = ResponseBuilder()
     try:
@@ -67,6 +80,7 @@ def update(id):
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['DELETE'])
+@limiter.limit("3 per minute")  # Límite específico para esta ruta
 def delete(id):
     response_builder = ResponseBuilder()
     try:

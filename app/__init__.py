@@ -5,11 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from app.config import cache_config, factory
 import redis
 import logging
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 # Instancia global de extensiones
 db = SQLAlchemy()
@@ -37,6 +38,11 @@ try:
 except redis.ConnectionError as e:
     logger.error(f"Error al conectar con Redis: {e}")
 
+# Inicializar el limitador
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["10 per minute"]  # Límite global para todo el microservicio
+)
 
 def create_app():
     app = Flask(__name__)
@@ -52,6 +58,9 @@ def create_app():
     except Exception as e:
         raise RuntimeError(f"Error al inicializar extensiones: {e}")
 
+    # Configurar el limiter con la app
+    limiter.init_app(app)
+
     try:
         from app.routes import compra
         app.register_blueprint(compra, url_prefix='/api/v1')
@@ -64,4 +73,3 @@ def create_app():
         return {"message": "El servicio de compras está en funcionamiento"}
 
     return app
-
