@@ -16,4 +16,4 @@ Flask-Caching
 redis
 gunicorn==21.0.0
 flask-limiter
-
+Flask-Limiter[redis]

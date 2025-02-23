@@ -1,8 +1,6 @@
 from flask import Blueprint, request
 from marshmallow import ValidationError
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-
+from app import limiter
 from app.mapping import CompraSchema, ResponseSchema
 from app.services import CompraService, ResponseBuilder
 
@@ -11,11 +9,6 @@ service = CompraService()
 compra_schema = CompraSchema()
 response_schema = ResponseSchema()
 
-# Configurar el limitador
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["10 per minute"]  # Límite global para todo el microservicio
-)
 
 # Aplicar limitadores específicos en las rutas
 @compra.route('/compras', methods=['GET'])

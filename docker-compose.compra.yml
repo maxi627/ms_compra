@@ -6,31 +6,30 @@ services:
     image: ms-compras:v1.1
     container_name: ms_compra
     environment:
-      - FLASK_ENV=development        #cambiar según el entorno a usar (development/production)
+      - FLASK_ENV=${FLASK_ENV}        #cambiar según el entorno a usar (development/production)
       # Configuración de PostgreSQL
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=ecomercedb
       - POSTGRES_PORT=${POSTGRES_PORT}
-
       # Configuración de Redis
-      - REDIS_HOST=${REDIS_HOST}  # Nombre del contenedor Redis
+      - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-
     env_file:
       - .env
-
-    ports:
-      - "5000:5000"
-
     restart: always
     volumes:
       - ./src:/app  # Sincroniza tu carpeta local con la del contenedor
-
     networks:
       - red1
+    ports:
+      - "5000:5000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ms-compras.rule=Host(`compras.localhost`) && PathPrefix(`/api/v1`)"
+      - "traefik.http.services.ms-compras.loadbalancer.server.port=5000"
 
 networks:
   red1:

@@ -22,6 +22,10 @@ redis_port = int(os.getenv('REDIS_PORT', 6379))
 redis_password = os.getenv('REDIS_PASSWORD', '')
 redis_db = int(os.getenv('REDIS_DB', 0))
 
+
+# URI de Redis para Flask-Limiter
+redis_uri = f"redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}"
+
 # Crear una instancia de Redis
 redis_client = redis.StrictRedis(
     host=redis_host,
@@ -30,19 +34,18 @@ redis_client = redis.StrictRedis(
     password=redis_password,
     decode_responses=True
 )
-
+# Inicializar el limitador con Redis como backend
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["10 per minute"],
+    storage_uri=redis_uri  # ✅ Pasar la URI en lugar de la instancia de Redis
+)
 # Verificar la conexión
 try:
     redis_client.ping()
     logger.info("Conexión a Redis exitosa.")
 except redis.ConnectionError as e:
     logger.error(f"Error al conectar con Redis: {e}")
-
-# Inicializar el limitador
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["10 per minute"]  # Límite global para todo el microservicio
-)
 
 def create_app():
     app = Flask(__name__)
@@ -55,11 +58,9 @@ def create_app():
     try:
         db.init_app(app)
         cache.init_app(app, config=cache_config) 
+        limiter.init_app(app)
     except Exception as e:
         raise RuntimeError(f"Error al inicializar extensiones: {e}")
-
-    # Configurar el limiter con la app
-    limiter.init_app(app)
 
     try:
         from app.routes import compra
