@@ -12,7 +12,7 @@ response_schema = ResponseSchema()
 
 # Aplicar limitadores específicos en las rutas
 @compra.route('/compras', methods=['GET'])
-@limiter.limit("5 per minute")  # Límite específico para esta ruta
+@limiter.limit("50000 per minute")  # Límite específico para esta ruta
 def all():
     response_builder = ResponseBuilder()
     try:
@@ -24,7 +24,7 @@ def all():
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['GET'])
-@limiter.limit("5 per minute")  # Límite específico para esta ruta
+@limiter.limit("50000 per minute")  # Límite específico para esta ruta
 def one(id):
     response_builder = ResponseBuilder()
     try:
@@ -41,7 +41,7 @@ def one(id):
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras', methods=['POST'])
-@limiter.limit("5 per minute")  # Límite específico para esta ruta
+@limiter.limit("50000 per minute")  # Límite específico para esta ruta
 def add():
     response_builder = ResponseBuilder()
     try:
@@ -57,7 +57,7 @@ def add():
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['PUT'])
-@limiter.limit("5 per minute")  # Límite específico para esta ruta
+@limiter.limit("50000 per minute")  # Límite específico para esta ruta
 def update(id):
     response_builder = ResponseBuilder()
     try:
@@ -73,7 +73,7 @@ def update(id):
         return response_schema.dump(response_builder.build()), 500
 
 @compra.route('/compras/<int:id>', methods=['DELETE'])
-@limiter.limit("3 per minute")  # Límite específico para esta ruta
+@limiter.limit("30000 per minute")  # Límite específico para esta ruta
 def delete(id):
     response_builder = ResponseBuilder()
     try:
