@@ -33,4 +33,4 @@ services:
 
 networks:
   red1:
-    external: true  # Usa la red compartida para la base de datos y redis
+    external: true  
