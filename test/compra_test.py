@@ -9,7 +9,7 @@ class CompraTestCase(unittest.TestCase):
         self.FECHA_COMPRA_PRUEBA = '2020-01-01:00:00:00'
         self.DIRECCION_ENVIO_PRUEBA = "Calle falsa 123"
     
-        os.environ['FLASK_CONTEXT'] = 'testing'
+        os.environ['FLASK_ENV'] = 'testing'
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()

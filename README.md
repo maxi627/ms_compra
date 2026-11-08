@@ -174,7 +174,7 @@ Si Python no encuentra el módulo `app`, agregar la raíz del repo al `PYTHONPAT
 
 ```bash
 # Unitarios (requieren PostgreSQL y Redis accesibles)
-FLASK_ENV=testing python -m unittest discover -s test -p "*_test.py" -v
+python -m unittest discover -s test -p "*_test.py" -v   # los tests usan FLASK_ENV=testing (TEST_DB_URI)
 ```
 
 | Archivo | Qué prueba |
